@@ -7,16 +7,23 @@
   <link rel="manifest" href="manifest.json" />
   <style>
     body{font-family:system-ui,sans-serif;margin:0;background:#f4f6f9;padding-bottom:75px}
-    header{background:#0b2545;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+    header{background:#0b2545;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+    .cats{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid #e2e8f0}
+    .cat{border:1px solid #cbd5e1;background:#f8fafc;color:#0b2545;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+    .cat.active{background:#0b2545;color:#fff;border-color:#0b2545}
     .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px}
-    .card{background:#fff;border-radius:12px;padding:10px;border:1px solid #e2e8f0}
-    .btn{background:#0b2545;color:#fff;border:none;border-radius:8px;padding:8px;width:100%;font-weight:700;margin-top:6px}
+    .card{background:#fff;border-radius:12px;padding:10px;border:1px solid #e2e8f0;display:flex;flex-direction:column;justify-content:space-between}
+    .pimg{width:100%;height:125px;object-fit:cover;border-radius:8px;background:#f1f5f9;margin-bottom:8px}
+    .row-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px}
+    .badge{display:inline-block;background:#eef2ff;color:#0b2545;font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px}
+    .new-tag{display:inline-block;background:#fff7ed;color:#ea580c;border:1px solid #fdba74;font-size:10px;font-weight:800;padding:1px 6px;border-radius:6px}
+    .btn{background:#0b2545;color:#fff;border:none;border-radius:8px;padding:8px;width:100%;font-weight:700;margin-top:8px}
     .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:flex-end;z-index:50}
     .modal.open{display:flex}
     .box{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:16px;max-height:88vh;overflow:auto}
     input,select,textarea{width:100%;padding:9px;margin-top:6px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box}
     .send{background:#16a34a;color:#fff;border:none;border-radius:10px;padding:12px;width:100%;font-size:15px;font-weight:800;margin-top:10px}
-    .bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+    .bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;z-index:20}
   </style>
 </head>
 <body>
@@ -25,6 +32,7 @@
     <button onclick="openM()" style="background:#f26419;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700">السلة (<span id="cnt">0</span>)</button>
   </header>
 
+  <div class="cats" id="cats"></div>
   <div class="grid" id="grid"></div>
 
   <div class="bar">
@@ -58,19 +66,55 @@
 
     <script>
     const WA = "9647874127622";
-    const items = [
-      {id:1, name:"منتج تجريبي 1", price:15000},
-      {id:2, name:"منتج تجريبي 2", price:25000},
-      {id:3, name:"منتج تجريبي 3", price:10000},
-      {id:4, name:"منتج تجريبي 4", price:30000}
+    const rawItems = [
+      {id:1, cat:"إكسسوارات", name:"ساعة كلاسيك", price:25000, img:"", isNew:false},
+      {id:2, cat:"إكسسوارات", name:"إكسسوار جديد 1", price:15000, img:"", isNew:true},
+      {id:3, cat:"أحذية", name:"حذاء رياضي", price:30000, img:"", isNew:false},
+      {id:4, cat:"ملصقات جدارية", name:"ملصقات 20×40 (40 قطعة)", price:12000, img:"", isNew:true}
     ];
+
+    const items = rawItems.map((it, idx) => ({
+      ...it,
+      code: "ALF-" + (idx + 1)
+    }));
+
+    const orderedItems = [
+      ...items.filter(x => x.isNew),
+      ...items.filter(x => !x.isNew)
+    ];
+
+    const cats = ["الكل", ...new Set(orderedItems.map(x => x.cat))];
+    let activeCat = "الكل";
     let cart = [];
 
+    function drawCats(){
+      document.getElementById("cats").innerHTML = cats.map(c => `
+        <button class="cat ${c === activeCat ? "active" : ""}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</button>
+      `).join("");
+    }
+
+    function setCat(c){
+      activeCat = c;
+      drawCats();
+      draw();
+    }
+
     function draw(){
-      document.getElementById("grid").innerHTML = items.map(i => `
+      const list = activeCat === "الكل"
+        ? orderedItems
+        : orderedItems.filter(x => x.cat === activeCat);
+
+      document.getElementById("grid").innerHTML = list.map(i => `
         <div class="card">
-          <div><strong>${i.name}</strong></div>
-          <div style="color:#f26419;font-weight:800;margin-top:4px">${i.price.toLocaleString()} د.ع</div>
+          <div>
+            ${i.img ? `<img class="pimg" src="${i.img}" alt="${i.name}" />` : `<div class="pimg" style="display:flex;align-items:center;justify-content:center;color:#64748b;font-size:12px">بلا صورة</div>`}
+            <div class="row-top">
+              <span class="badge">${i.code}</span>
+              ${i.isNew ? `<span class="new-tag">جديد</span>` : ``}
+            </div>
+            <div><strong>${i.name}</strong></div>
+            <div style="color:#f26419;font-weight:800;margin-top:4px">${i.price.toLocaleString()} د.ع</div>
+          </div>
           <button class="btn" onclick="add(${i.id})">أضف للسلة</button>
         </div>
       `).join("");
@@ -99,7 +143,7 @@
         form.style.display = "none";
         return;
       }
-      box.innerHTML = cart.map(x => `<div>${x.name} × ${x.q} = ${(x.price*x.q).toLocaleString()} د.ع</div>`).join("");
+      box.innerHTML = cart.map(x => `<div>[${x.code}] ${x.name} × ${x.q} = ${(x.price*x.q).toLocaleString()} د.ع</div>`).join("");
       form.style.display = "block";
     }
 
@@ -118,12 +162,13 @@
         return;
       }
       const tot = cart.reduce((s,x)=>s+x.q*x.price,0);
-      const lines = cart.map(x => `- ${x.name} (${x.q}) = ${(x.price*x.q).toLocaleString()} د.ع`).join("%0A");
+      const lines = cart.map(x => `- [${x.code}] ${x.name} (${x.q}) = ${(x.price*x.q).toLocaleString()} د.ع`).join("%0A");
       const msg = `*حجز جديد - متجر ألفيّة*%0Aالاسم: ${n}%0Aالموبايل: ${p}%0Aالمحافظة: ${g}%0Aالعنوان: ${a}%0Aالمنتجات:%0A${lines}%0Aالمجموع: ${tot.toLocaleString()} د.ع${nt ? "%0Aملاحظات: "+nt : ""}`;
       const url = `https://api.whatsapp.com/send?phone=${WA}&text=${msg}`;
       window.location.href = url;
     }
 
+    drawCats();
     draw();
   </script>
 </body>
