@@ -3,142 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ألفيّة | من الألف إلى الياء في متجر واحد</title>
+  <title>ألفيّة</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0b2545" />
   <style>
-    :root { --navy:#0b2545; --orange:#f26419; --bg:#f4f6f9; --card:#fff; --text:#141923; --border:#e2e8f0; }
-    * { box-sizing:border-box; font-family:system-ui,sans-serif; }
-    body { margin:0; background:var(--bg); color:var(--text); padding-bottom:80px; }
-    header { position:sticky; top:0; z-index:30; background:var(--navy); color:#fff; padding:12px 14px; }
-    .top { display:flex; justify-content:space-between; align-items:center; }
-    .title { font-size:20px; font-weight:800; }
-    .title span { color:#ff7b33; }
-    .cart-btn { background:var(--orange); color:#fff; border:none; border-radius:10px; padding:8px 12px; font-weight:700; }
-    .search { width:100%; margin-top:10px; padding:9px 12px; border-radius:10px; border:none; }
-    .cats { display:flex; gap:8px; overflow-x:auto; padding:10px 14px; background:#fff; border-bottom:1px solid var(--border); }
-    .cat { border:1px solid var(--border); background:var(--bg); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; }
-    .cat.active { background:var(--navy); color:#fff; }
-    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:12px 14px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px; display:flex; flex-direction:column; justify-content:space-between; }
-    .icon { font-size:38px; text-align:center; background:#f1f5f9; border-radius:10px; padding:14px 0; margin-bottom:8px; }
-    .p-title { font-size:13px; font-weight:800; margin-bottom:6px; }
-    .price { font-size:14px; font-weight:800; color:var(--navy); margin-bottom:8px; }
-    .add { width:100%; background:var(--navy); color:#fff; border:none; border-radius:9px; padding:8px; font-weight:700; }
-    .modal { position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:flex-end; z-index:50; }
-    .modal.open { display:flex; }
-    .sheet { background:#fff; width:100%; max-height:88vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:16px; }
-    .field { margin-top:10px; }
-    .field label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
-    .field input, .field select, .field textarea { width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:9px; font-size:14px; }
-    .send { margin-top:14px; width:100%; background:#16a34a; color:#fff; border:none; border-radius:11px; padding:12px; font-size:15px; font-weight:800; }
-    .bar { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border); padding:10px 14px; display:flex; justify-content:space-between; align-items:center; }
-    .bar button { background:var(--orange); color:#fff; border:none; border-radius:10px; padding:9px 14px; font-weight:800; }
+    body{font-family:system-ui,sans-serif;margin:0;background:#f4f6f9;padding-bottom:75px}
+    header{background:#0b2545;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px}
+    .card{background:#fff;border-radius:12px;padding:10px;border:1px solid #e2e8f0}
+    .btn{background:#0b2545;color:#fff;border:none;border-radius:8px;padding:8px;width:100%;font-weight:700;margin-top:6px}
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:flex-end;z-index:50}
+    .modal.open{display:flex}
+    .box{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:16px;max-height:88vh;overflow:auto}
+    input,select,textarea{width:100%;padding:9px;margin-top:6px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box}
+    .send{background:#16a34a;color:#fff;border:none;border-radius:10px;padding:12px;width:100%;font-size:15px;font-weight:800;margin-top:10px}
+    .bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
   </style>
 </head>
 <body>
   <header>
-    <div class="top">
-      <div><div class="title">ألفيّـ<span>ة</span></div><div style="font-size:11px;color:#cbd5e1;">من الألف إلى الياء في متجر واحد</div></div>
-      <button class="cart-btn" onclick="openModal()">السلة (<span id="count">0</span>)</button>
-    </div>
-    <input id="q" class="search" placeholder="ابحث في ألفيّة..." oninput="draw()" />
+    <div><strong>ألفيّة</strong> <small style="color:#ff7b33">من الألف إلى الياء</small></div>
+    <button onclick="openM()" style="background:#f26419;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700">السلة (<span id="cnt">0</span>)</button>
   </header>
-  <div class="cats" id="cats"></div>
-  <main class="grid" id="grid"></main>
+
+  <div class="grid" id="grid"></div>
+
   <div class="bar">
-    <div>المجموع: <strong id="total">0 د.ع</strong></div>
-    <button onclick="openModal()">إتمام الحجز</button>
+    <div>المجموع: <strong id="tot">0 د.ع</strong></div>
+    <button onclick="openM()" style="background:#f26419;color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:800">إتمام الحجز</button>
   </div>
-  <div class="modal" id="modal">
-    <div class="sheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:8px;">
-        <strong>سلة ألفيّة والحجز</strong>
-        <button onclick="closeModal()" style="border:none;background:#f1f5f9;border-radius:50%;width:30px;height:30px;">✕</button>
+
+  <div class="modal" id="m">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>سلة ألفيّة</strong>
+        <button onclick="closeM()" style="border:none;background:#e2e8f0;border-radius:50%;width:28px;height:28px">✕</button>
       </div>
-      <div id="items" style="margin-top:8px;"></div>
-      <form id="form" onsubmit="book(event)" style="display:none;">
-        <div class="field"><label>الاسم الكامل *</label><input id="name" required /></div>
-        <div class="field"><label>رقم الموبايل *</label><input id="phone" required placeholder="07XXXXXXXXX" /></div>
-        <div class="field"><label>المحافظة *</label><select id="gov" required><option value="">اختر المحافظة</option><option>بغداد</option><option>البصرة</option><option>نينوى</option><option>أربيل</option><option>النجف</option><option>كربلاء</option><option>بابل</option><option>الأنبار</option><option>ديالى</option><option>ذي قار</option><option>صلاح الدين</option><option>كركوك</option><option>واسط</option><option>ميسان</option><option>المثنى</option><option>الديوانية</option><option>السليمانية</option><option>دهوك</option></select></div>
-        <div class="field"><label>المنطقة / العنوان *</label><input id="area" required /></div>
-        <div class="field"><label>ملاحظات</label><textarea id="notes" rows="2"></textarea></div>
-        <button class="send" type="submit">إرسال الحجز الآن</button>
-      </form>
+      <div id="cartBox" style="margin:10px 0"></div>
+      <div id="formBox" style="display:none">
+        <input id="n" placeholder="الاسم الكامل *" />
+        <input id="p" placeholder="رقم الموبايل *" />
+        <select id="g">
+          <option value="">اختر المحافظة *</option>
+          <option>بغداد</option><option>البصرة</option><option>نينوى</option><option>أربيل</option>
+          <option>النجف</option><option>كربلاء</option><option>بابل</option><option>الأنبار</option>
+          <option>ديالى</option><option>ذي قار</option><option>صلاح الدين</option><option>كركوك</option>
+          <option>واسط</option><option>ميسان</option><option>المثنى</option><option>الديوانية</option>
+        </select>
+        <input id="a" placeholder="المنطقة / العنوان *" />
+        <textarea id="nt" rows="2" placeholder="ملاحظات"></textarea>
+        <button class="send" onclick="goWA()">إرسال الحجز عبر واتساب</button>
+      </div>
     </div>
   </div>
-  <script>
-    const WA = "9647874127622";
-    const cats = ["الكل", "إلكترونيات", "أزياء ومنوعات", "منزل ومطبخ", "عروض سريعة"];
-    const prods = [
-      { id:1, t:"سماعة لاسلكية عالية الوضوح", c:"إلكترونيات", p:18000, i:"🎧" },
-      { id:2, t:"ساعة ذكية متعددة الأوضاع", c:"إلكترونيات", p:24000, i:"⌚" },
-      { id:3, t:"حقيبة سفر وعمل عصرية", c:"أزياء ومنوعات", p:22000, i:"🎒" },
-      { id:4, t:"منظم مطبخ وتخزين ذكي", c:"منزل ومطبخ", p:12000, i:"🍱" },
-      { id:5, t:"مصباح إضاءة مكتبي شحن", c:"منزل ومطبخ", p:15000, i:"💡" },
-      { id:6, t:"باور بانك سريع الشحن", c:"عروض سريعة", p:21000, i:"🔋" }
-    ];
-    let cat = "الكل", cart = [];
-    const iq = n => Number(n).toLocaleString("en-US") + " د.ع";
 
-    function catsBar(){
-      document.getElementById("cats").innerHTML = cats.map(c =>
-        `<button class="cat ${c===cat?"active":""}" onclick="setCat('${c}')">${c}</button>`
-      ).join("");
-    }
-    function setCat(c){ cat = c; catsBar(); draw(); }
+    <script>
+    const WA = "9647874127622";
+    const items = [
+      {id:1, name:"منتج تجريبي 1", price:15000},
+      {id:2, name:"منتج تجريبي 2", price:25000},
+      {id:3, name:"منتج تجريبي 3", price:10000},
+      {id:4, name:"منتج تجريبي 4", price:30000}
+    ];
+    let cart = [];
 
     function draw(){
-      const q = (document.getElementById("q").value||"").trim().toLowerCase();
-      const list = prods.filter(p => (cat==="الكل"||p.c===cat) && (!q||p.t.toLowerCase().includes(q)||p.c.toLowerCase().includes(q)));
-      document.getElementById("grid").innerHTML = list.map(p =>
-        `<div class="card"><div class="icon">${p.i}</div><div class="p-title">${p.t}</div><div class="price">${iq(p.p)}</div><button class="add" onclick="add(${p.id})">أضف للسلة</button></div>`
-      ).join("");
+      document.getElementById("grid").innerHTML = items.map(i => `
+        <div class="card">
+          <div><strong>${i.name}</strong></div>
+          <div style="color:#f26419;font-weight:800;margin-top:4px">${i.price.toLocaleString()} د.ع</div>
+          <button class="btn" onclick="add(${i.id})">أضف للسلة</button>
+        </div>
+      `).join("");
     }
 
     function add(id){
-      const p = prods.find(x=>x.id===id); if(!p) return;
-      const f = cart.find(x=>x.id===id); if(f) f.qty++; else cart.push({...p, qty:1});
+      const found = cart.find(x => x.id === id);
+      if(found) found.q++;
+      else cart.push({...items.find(x => x.id === id), q:1});
       sync();
     }
-    function chg(id, d){
-      const f = cart.find(x=>x.id===id); if(!f) return;
-      f.qty += d; if(f.qty<=0) cart = cart.filter(x=>x.id!==id);
-      sync(); renderCart();
-    }
-    const tot = () => cart.reduce((s,x)=>s+x.p*x.qty, 0);
-    const cnt = () => cart.reduce((s,x)=>s+x.qty, 0);
 
     function sync(){
-      document.getElementById("count").textContent = cnt();
-      document.getElementById("total").textContent = iq(tot());
-    }
-    function openModal(){ renderCart(); document.getElementById("modal").classList.add("open"); }
-    function closeModal(){ document.getElementById("modal").classList.remove("open"); }
-
-    function renderCart(){
-      const box = document.getElementById("items"), frm = document.getElementById("form");
-      if(!cart.length){ box.innerHTML = `<div style="padding:18px;text-align:center;color:#64748b;">السلة فارغة حالياً.</div>`; frm.style.display="none"; return; }
-      box.innerHTML = cart.map(x =>
-        `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #e2e8f0;">
-          <div><strong>${x.i} ${x.t}</strong><div style="font-size:12px;color:#64748b;">${iq(x.p)} × ${x.qty}</div></div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button onclick="chg(${x.id},-1)" style="width:26px;height:26px;">-</button><strong>${x.qty}</strong><button onclick="chg(${x.id},1)" style="width:26px;height:26px;">+</button>
-          </div>
-        </div>`
-      ).join("") + `<div style="margin-top:8px;font-weight:800;">المجموع: ${iq(tot())}</div>`;
-      frm.style.display = "block";
+      const cnt = cart.reduce((s,x)=>s+x.q,0);
+      const tot = cart.reduce((s,x)=>s+x.q*x.price,0);
+      document.getElementById("cnt").textContent = cnt;
+      document.getElementById("tot").textContent = tot.toLocaleString() + " د.ع";
     }
 
-    function book(e){
-      e.preventDefault(); if(!cart.length) return;
-      const code = "ALF-" + Math.floor(100000 + Math.random()*900000);
-      const lines = cart.map((x,i)=>`${i+1}. ${x.t} (${x.qty}) - ${iq(x.p*x.qty)}`).join("\n");
-      const msg = `حجز جديد - ألفيّة 🚀\nرقم الحجز: ${code}\nالاسم: ${name.value.trim()}\nالموبايل: ${phone.value.trim()}\nالمحافظة: ${gov.value.trim()}\nالعنوان: ${area.value.trim()}${notes.value.trim()?"\nملاحظات: "+notes.value.trim():""}\n\nالمنتجات:\n${lines}\n\nالمجموع الكلي: ${iq(tot())}`;
-      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, "_blank");
+    function openM(){
+      document.getElementById("m").classList.add("open");
+      const box = document.getElementById("cartBox");
+      const form = document.getElementById("formBox");
+      if(!cart.length){
+        box.innerHTML = "<p>السلة فارغة</p>";
+        form.style.display = "none";
+        return;
+      }
+      box.innerHTML = cart.map(x => `<div>${x.name} × ${x.q} = ${(x.price*x.q).toLocaleString()} د.ع</div>`).join("");
+      form.style.display = "block";
     }
 
-    catsBar(); draw(); sync();
+    function closeM(){
+      document.getElementById("m").classList.remove("open");
+    }
+
+    function goWA(){
+      const n = document.getElementById("n").value.trim();
+      const p = document.getElementById("p").value.trim();
+      const g = document.getElementById("g").value;
+      const a = document.getElementById("a").value.trim();
+      const nt = document.getElementById("nt").value.trim();
+      if(!n || !p || !g || !a){
+        alert("يرجى ملء الحقول المطلوبة");
+        return;
+      }
+      const tot = cart.reduce((s,x)=>s+x.q*x.price,0);
+      const lines = cart.map(x => `- ${x.name} (${x.q}) = ${(x.price*x.q).toLocaleString()} د.ع`).join("%0A");
+      const msg = `*حجز جديد - متجر ألفيّة*%0Aالاسم: ${n}%0Aالموبايل: ${p}%0Aالمحافظة: ${g}%0Aالعنوان: ${a}%0Aالمنتجات:%0A${lines}%0Aالمجموع: ${tot.toLocaleString()} د.ع${nt ? "%0Aملاحظات: "+nt : ""}`;
+      const url = `https://api.whatsapp.com/send?phone=${WA}&text=${msg}`;
+      window.location.href = url;
+    }
+
+    draw();
   </script>
 </body>
 </html>
