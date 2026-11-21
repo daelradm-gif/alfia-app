@@ -1,24 +1,25 @@
 {
-  "name": "ألفيّة",
+  "name": "متجر ألفيّة",
   "short_name": "ألفيّة",
-  "description": "من الألف إلى الياء في متجر واحد",
+  "description": "عروض يومية وأسعار مناسبة وتوصيل لكل المحافظات",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0b2545",
-  "dir": "rtl",
-  "lang": "ar",
+  "orientation": "portrait",
+  "background_color": "#0c0e12",
+  "theme_color": "#0c0e12",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "IMG_3196.jpeg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg",
+      "purpose": "any"
     },
     {
-      "src": "icon.png",
+      "src": "IMG_3196.jpeg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }
