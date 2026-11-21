@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ألفيّة" />
+  <link rel="icon" type="image/jpeg" href="IMG_3196.jpeg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="IMG_3196.jpeg" />
   <link rel="manifest" href="manifest.json" />
   <title>متجر ألفيّة</title>
   <style>
@@ -40,7 +42,6 @@
       padding-bottom: 40px;
     }
 
-    /* Header */
     .header {
       position: sticky;
       top: 0;
@@ -67,17 +68,14 @@
     }
 
     .brand-logo {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 11px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #111318;
-      font-weight: 900;
-      font-size: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      background: #fff;
       flex-shrink: 0;
+      display: block;
     }
 
     .brand-name {
@@ -111,14 +109,12 @@
       color: var(--accent);
     }
 
-    /* Main Container */
     .main {
       max-width: 960px;
       margin: 0 auto;
       padding: 14px 16px;
     }
 
-    /* Search & Filter */
     .search-box {
       margin-bottom: 12px;
     }
@@ -171,7 +167,6 @@
       font-weight: 700;
     }
 
-    /* Products Grid */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -324,7 +319,6 @@
       background: var(--whatsapp-dark);
     }
 
-    /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -380,7 +374,6 @@
       font-size: 1.1rem;
     }
 
-    /* Product Details Gallery */
     .detail-main-img {
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -412,7 +405,6 @@
       border-color: var(--accent);
     }
 
-    /* Admin Controls inside Modal */
     .form-group {
       margin-bottom: 12px;
     }
@@ -643,11 +635,10 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="header-inner">
       <div class="brand">
-        <div class="brand-logo">أ</div>
+        <img src="IMG_3196.jpeg" alt="شعار ألفيّة" class="brand-logo" />
         <div>
           <div class="brand-name">متجر ألفيّة</div>
           <div class="brand-sub">عروض يومية وأسعار مناسبة • توصيل لكل المحافظات</div>
@@ -657,7 +648,6 @@
     </div>
   </header>
 
-  <!-- Store Front -->
   <main class="main">
     <div class="search-box">
       <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن منتج..." />
@@ -672,7 +662,6 @@
     </div>
   </main>
 
-  <!-- Product Details Modal -->
   <div class="modal-backdrop" id="detailModal">
     <div class="modal-box">
       <div class="modal-head">
@@ -688,7 +677,6 @@
     </div>
   </div>
 
-  <!-- PIN Login Modal -->
   <div class="modal-backdrop" id="pinModal">
     <div class="modal-box">
       <div class="modal-head">
@@ -706,7 +694,6 @@
     </div>
   </div>
 
-  <!-- Embedded Admin Modal -->
   <div class="modal-backdrop" id="adminModal">
     <div class="modal-box admin-modal">
       <div class="modal-head">
@@ -821,7 +808,6 @@
     let selectedImages = [];
     let editingId = null;
 
-    // Elements
     const storeGrid = document.getElementById("storeGrid");
     const catsBar = document.getElementById("catsBar");
     const searchInput = document.getElementById("searchInput");
@@ -890,7 +876,6 @@
       statusMsg.className = "status-msg " + (type === "ok" ? "status-ok" : type === "err" ? "status-err" : "");
     }
 
-    // Storefront Rendering
     function renderCategories(activeProducts) {
       const uniqueCats = ["الكل"];
       activeProducts.forEach((p) => {
@@ -1098,7 +1083,6 @@
       if (e.target === detailModal) detailModal.classList.remove("open");
     });
 
-    // PIN & Admin Modal Logic
     openAdminBtn.addEventListener("click", () => {
       if (isAdminUnlocked) {
         adminModal.classList.add("open");
@@ -1133,7 +1117,6 @@
       if (e.target === adminModal) adminModal.classList.remove("open");
     });
 
-    // Image Upload & Compression
     function compressImageFile(file, maxWidth = 800, quality = 0.72) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
