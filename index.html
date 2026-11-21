@@ -41,6 +41,7 @@
       color: var(--text);
       line-height: 1.5;
       padding-bottom: 92px;
+      touch-action: manipulation;
     }
 
     .header {
@@ -68,6 +69,9 @@
       gap: 10px;
       cursor: pointer;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
       min-width: 0;
     }
 
@@ -80,6 +84,7 @@
       background: #fff;
       flex-shrink: 0;
       display: block;
+      pointer-events: none;
     }
 
     .brand-name {
@@ -946,7 +951,7 @@
 <body>
   <header class="header">
     <div class="header-inner">
-      <div class="brand" id="secretLogoTrigger" title="متجر ألفيّة">
+      <div class="brand" id="secretLogoTrigger" title="اضغط مطولاً للدخول للإدارة">
         <img src="IMG_3196.jpeg" alt="شعار ألفيّة" class="brand-logo" />
         <div>
           <div class="brand-name">متجر ألفيّة</div>
@@ -1184,9 +1189,7 @@
     let currentDetailProduct = null;
     let cart = loadCartFromStorage();
     let deferredInstallPrompt = null;
-
-    let logoTapCount = 0;
-    let logoTapTimer = null;
+    let longPressTimer = null;
 
     const centerInstallBanner = document.getElementById("centerInstallBanner");
     const centerInstallBtn = document.getElementById("centerInstallBtn");
@@ -1253,6 +1256,44 @@
     const submitBtn = document.getElementById("submitBtn");
     const statusMsg = document.getElementById("statusMsg");
     const adminProductsList = document.getElementById("adminProductsList");
+
+    function openAdminAccess() {
+      if (isAdminUnlocked) {
+        adminModal.classList.add("open");
+      } else {
+        pinError.textContent = "";
+        pinInput.value = "";
+        pinModal.classList.add("open");
+        setTimeout(() => pinInput.focus(), 100);
+      }
+    }
+
+    function startLongPress(e) {
+      if (e.type === "touchstart") {
+        e.preventDefault();
+      }
+      clearTimeout(longPressTimer);
+      longPressTimer = setTimeout(() => {
+        openAdminAccess();
+      }, 1200);
+    }
+
+    function cancelLongPress() {
+      clearTimeout(longPressTimer);
+    }
+
+    secretLogoTrigger.addEventListener("touchstart", startLongPress, { passive: false });
+    secretLogoTrigger.addEventListener("touchend", cancelLongPress);
+    secretLogoTrigger.addEventListener("touchcancel", cancelLongPress);
+    secretLogoTrigger.addEventListener("touchmove", cancelLongPress);
+    secretLogoTrigger.addEventListener("mousedown", startLongPress);
+    secretLogoTrigger.addEventListener("mouseup", cancelLongPress);
+    secretLogoTrigger.addEventListener("mouseleave", cancelLongPress);
+    secretLogoTrigger.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    if (new URLSearchParams(window.location.search).get("admin") === "1") {
+      openAdminAccess();
+    }
 
     function isStandaloneMode() {
       return (
@@ -1476,27 +1517,17 @@
         grandTotal += lineTotal;
         const code = getShortCode(item.id);
         return (
-          `${index + 1}. ${item.name} (#${code})
-` +
+          `${index + 1}. ${item.name} (#${code})\n` +
           `   العدد: ${qty} × ${formatIQD(unitPrice)} = ${formatIQD(lineTotal)}`
         );
       });
 
       const message =
-        `مرحباً متجر ألفيّة، أرغب بتأكيد طلب سلة المشتريات التالية:
-
-` +
-        lines.join("
-
-") +
-        `
-
-━━━━━━━━━━━━━━
-` +
-        `• عدد المواد: ${cart.length}
-` +
-        `• مجموع القطع: ${totalQty}
-` +
+        `مرحباً متجر ألفيّة، أرغب بتأكيد طلب سلة المشتريات التالية:\n\n` +
+        lines.join("\n\n") +
+        `\n\n━━━━━━━━━━━━━━\n` +
+        `• عدد المواد: ${cart.length}\n` +
+        `• مجموع القطع: ${totalQty}\n` +
         `• المجموع الكلي: ${formatIQD(grandTotal)}`;
 
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -1851,28 +1882,6 @@
         detailModal.classList.remove("open");
         currentDetailProduct = null;
       }
-    });
-
-    secretLogoTrigger.addEventListener("click", () => {
-      logoTapCount += 1;
-      clearTimeout(logoTapTimer);
-
-      if (logoTapCount >= 3) {
-        logoTapCount = 0;
-        if (isAdminUnlocked) {
-          adminModal.classList.add("open");
-        } else {
-          pinError.textContent = "";
-          pinInput.value = "";
-          pinModal.classList.add("open");
-          setTimeout(() => pinInput.focus(), 100);
-        }
-        return;
-      }
-
-      logoTapTimer = setTimeout(() => {
-        logoTapCount = 0;
-      }, 900);
     });
 
     closePinBtn.addEventListener("click", () => pinModal.classList.remove("open"));
