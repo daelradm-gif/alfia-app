@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدارة متجر ألفيّة</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --card: #181b22;
+      --card-2: #20242e;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --danger: #ef4444;
+      --success: #10b981;
+      --border: #2c313d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px 14px 60px;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+    .badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    label {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin-top: 12px;
+    }
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .check-row label {
+      margin: 0;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+    .btn {
+      width: 100%;
+      margin-top: 14px;
+      background: var(--accent);
+      color: #111;
+      border: none;
+      border-radius: 11px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      min-height: 22px;
+    }
+    .ok { color: var(--success); }
+    .err { color: var(--danger); }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .product-info strong {
+      display: block;
+      font-size: 0.98rem;
+    }
+    .product-meta {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 3px;
+    }
+    .new-tag {
+      background: rgba(16, 185, 129, 0.16);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      margin-right: 6px;
+    }
+    .del-btn {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .del-btn:hover { background: rgba(239, 68, 68, 0.28); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>لوحة مدير متجر ألفيّة</h1>
+      <span class="badge">alfia-store • مباشر</span>
+    </div>
+
+    <div class="card">
+      <form id="productForm">
+        <div class="grid">
+          <div>
+            <label for="title">اسم المنتج</label>
+            <input id="title" type="text" placeholder="مثال: طقم ملصقات جدارية" required />
+          </div>
+          <div>
+            <label for="category">القسم</label>
+            <input id="category" type="text" list="categoriesList" placeholder="مثال: ملصقات جدارية" required />
+            <datalist id="categoriesList">
+              <option value="ملصقات جدارية"></option>
+              <option value="أحذية"></option>
+              <option value="إكسسوارات"></option>
+              <option value="أجهزة ومنزل"></option>
+            </datalist>
+          </div>
+          <div>
+            <label for="price">السعر</label>
+            <input id="price" type="text" placeholder="مثال: 15,000 د.ع أو $12" required />
+          </div>
+          <div>
+            <label for="image">اسم الصورة أو رابطها</label>
+            <input id="image" type="text" placeholder="مثال: IMG_3194.jpeg" required />
+          </div>
+        </div>
+
+        <div class="check-row">
+          <input id="isNew" type="checkbox" checked />
+          <label for="isNew">منتج جديد (يظهر بالبداية فوق داخل قسمه)</label>
+        </div>
+
+        <button id="submitBtn" class="btn" type="submit">إضافة المنتج وحفظه فوراً</button>
+        <div id="statusMsg" class="status"></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 8px;font-size:1.1rem;">المنتجات المحفوظة حالياً</h2>
+      <div id="productsList" class="product-meta">جاري تحميل المنتجات...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwKhkIyhlmNOAHocg5WDF-v5LlS7uevOE",
+      authDomain: "alfia-store.firebaseapp.com",
+      databaseURL: "https://alfia-store-default-rtdb.firebaseio.com",
+      projectId: "alfia-store",
+      storageBucket: "alfia-store.firebasestorage.app",
+      messagingSenderId: "666569828298",
+      appId: "1:666569828298:web:e92bcbdad3f6d047331133"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const productsRef = ref(db, "products");
+
+    const form = document.getElementById("productForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusMsg = document.getElementById("statusMsg");
+    const productsList = document.getElementById("productsList");
+
+    function resolveImagePath(imgVal) {
+      const clean = imgVal.trim();
+      if (!clean) return "";
+      if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("./") || clean.startsWith("/")) {
+        return clean;
+      }
+      return "./" + clean;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      statusMsg.className = "status";
+      statusMsg.textContent = "جاري حفظ المنتج في قاعدة البيانات...";
+
+      const title = document.getElementById("title").value.trim();
+      const category = document.getElementById("category").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const imageRaw = document.getElementById("image").value.trim();
+      const isNew = document.getElementById("isNew").checked;
+
+      try {
+        await push(productsRef, {
+          title,
+          category,
+          price,
+          image: resolveImagePath(imageRaw),
+          isNew,
+          createdAt: Date.now()
+        });
+
+        statusMsg.className = "status ok";
+        statusMsg.textContent = "تمت إضافة المنتج وحفظه بنجاح!";
+        form.reset();
+        document.getElementById("isNew").checked = true;
+      } catch (err) {
+        statusMsg.className = "status err";
+        statusMsg.textContent = "صار خطأ أثناء الحفظ: " + err.message;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    onValue(productsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        productsList.innerHTML = '<div class="product-meta">لا توجد منتجات مضافة بعد في قاعدة البيانات.</div>';
+        return;
+      }
+
+      const items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+      items.sort((a, b) => {
+        if (Boolean(b.isNew) !== Boolean(a.isNew)) return b.isNew ? 1 : -1;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      productsList.innerHTML = items.map((item) => `
+        <div class="product-item">
+          <div class="product-info">
+            <strong>
+              ${item.title || "بدون اسم"}
+              ${item.isNew ? '<span class="new-tag">جديد</span>' : ""}
+            </strong>
+            <div class="product-meta">
+              القسم: ${item.category || "عام"} • السعر: ${item.price || "-"} • الصورة: ${item.image || "-"}
+            </div>
+          </div>
+          <button class="del-btn" data-id="${item.id}">حذف</button>
+        </div>
+      `).join("");
+
+      productsList.querySelectorAll(".del-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          try {
+            await remove(ref(db, "products/" + id));
+          } catch (err) {
+            alert("تعذر الحذف: " + err.message);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
