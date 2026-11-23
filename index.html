@@ -1089,6 +1089,10 @@
       <form id="productForm">
         <div class="form-group">
           <label>صور المنتج (<span id="imagesCountText">0 / 6</span>)</label>
+                <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+        <button type="button" class="btn-secondary" id="openGiftCodesModalBtn" style="padding:6px 12px; font-size:12px;">🎁 رموز الهدايا</button>
+      </div>
+
           <label class="upload-box" for="imageInput">
             <div style="font-size:1.4rem;">⬆</div>
             <div>ارفع الصور من الاستوديو</div>
@@ -1150,20 +1154,31 @@
         <div class="hint">جاري التحميل...</div>
       </div>
     </div>
-          <hr class="admin-divider" />
-      <h4 style="margin-bottom:10px; font-size:15px;">🎁 رموز ختم بطاقة الجوائز (8 خانات = 20,000 د.ع)</h4>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+         
+
+  </div>
+    <div class="modal-backdrop" id="giftCodesModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🎁 رموز ختم بطاقة الجوائز</h3>
+        <button type="button" class="close-btn" id="closeGiftCodesModalBtn">✕</button>
+      </div>
+      <p style="font-size:13px; opacity:0.85; margin-bottom:10px;">
+        8 خانات = جائزة 20,000 دينار (كل رمز يختم خانة وحدة لطلب 40,000 د.ع فما فوق).
+      </p>
+      <div style="margin-bottom:10px;">
         <button type="button" class="btn-submit" id="generateStampCodeBtn" style="width:auto; padding:10px 16px;">توليد رمز ختم جديد</button>
       </div>
       <div id="generatedStampBox" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); border-radius:10px; padding:10px; display:none;">
-        <div style="font-size:13px; margin-bottom:6px;">الرمز الجاهز للإرسال للزبون (يختم خانة وحدة لطلب 40,000 د.ع فما فوق):</div>
+        <div style="font-size:13px; margin-bottom:6px;">الرمز الجاهز للإرسال للزبون:</div>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
           <strong id="generatedStampText" style="font-size:18px; letter-spacing:1px; color:#fbbf24;"></strong>
           <button type="button" class="btn-secondary" id="copyStampCodeBtn" style="padding:6px 12px;">نسخ الرمز</button>
         </div>
       </div>
-
+    </div>
   </div>
+
     <div class="modal-backdrop" id="loyaltyModal">
     <div class="modal-box">
       <div class="modal-head">
@@ -2416,6 +2431,21 @@ function renderStore() {
               loyaltyStatusMsg.textContent = "حدث خطأ أثناء التحقق من الرمز.";
             }
           }
+        });
+      }
+      const openGiftCodesModalBtn = document.getElementById("openGiftCodesModalBtn");
+      const giftCodesModal = document.getElementById("giftCodesModal");
+      const closeGiftCodesModalBtn = document.getElementById("closeGiftCodesModalBtn");
+
+      if (openGiftCodesModalBtn && giftCodesModal) {
+        openGiftCodesModalBtn.addEventListener("click", () => {
+          giftCodesModal.classList.add("open");
+        });
+      }
+
+      if (closeGiftCodesModalBtn && giftCodesModal) {
+        closeGiftCodesModalBtn.addEventListener("click", () => {
+          giftCodesModal.classList.remove("open");
         });
       }
 
