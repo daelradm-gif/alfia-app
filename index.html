@@ -960,6 +960,10 @@
       </div>
 
       <div class="header-actions">
+                <button type="button" class="header-cart-btn" id="openLoyaltyBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;">
+          <span>🎁 الجوائز</span>
+        </button>
+
         <button type="button" class="header-cart-btn" id="openCartHeaderBtn" aria-label="سلة المشتريات">
           <span>🛒 السلة</span>
           <span class="header-cart-badge" id="headerCartBadge">0</span>
@@ -1146,7 +1150,40 @@
         <div class="hint">جاري التحميل...</div>
       </div>
     </div>
+          <hr class="admin-divider" />
+      <h4 style="margin-bottom:10px; font-size:15px;">🎁 رموز ختم بطاقة الجوائز (8 خانات = 20,000 د.ع)</h4>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+        <button type="button" class="btn-submit" id="generateStampCodeBtn" style="width:auto; padding:10px 16px;">توليد رمز ختم جديد</button>
+      </div>
+      <div id="generatedStampBox" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); border-radius:10px; padding:10px; display:none;">
+        <div style="font-size:13px; margin-bottom:6px;">الرمز الجاهز للإرسال للزبون (يختم خانة وحدة لطلب 40,000 د.ع فما فوق):</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+          <strong id="generatedStampText" style="font-size:18px; letter-spacing:1px; color:#fbbf24;"></strong>
+          <button type="button" class="btn-secondary" id="copyStampCodeBtn" style="padding:6px 12px;">نسخ الرمز</button>
+        </div>
+      </div>
+
   </div>
+    <div class="modal-backdrop" id="loyaltyModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>🎁 بطاقة الجوائز</h3>
+        <button type="button" class="close-btn" id="closeLoyaltyBtn">✕</button>
+      </div>
+      <p style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fbbf24;">املأ الخانات للفوز بجائزة 20,000 دينار</p>
+      <p style="font-size:12px; opacity:0.85; margin-bottom:12px;">كل طلب بقيمة 40,000 دينار أو أكثر يختم خانة واحدة برمز خاص يرسله لك المتجر.</p>
+      <div id="loyaltySlotsGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:14px;"></div>
+      <div id="loyaltyWinBanner" style="display:none; background:rgba(34,197,94,0.16); border:1px solid #22c55e; color:#86efac; padding:10px; border-radius:10px; font-weight:700; font-size:14px; margin-bottom:12px; text-align:center;">
+        🎉 مبروك! فزت بجائزة قيمتها 20,000 دينار
+      </div>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="stampCodeInput" placeholder="أدخل رمز الختم هنا" style="flex:1; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.25); color:#fff;" />
+        <button type="button" class="btn-submit" id="applyStampCodeBtn" style="width:auto; padding:10px 16px;">ختم</button>
+      </div>
+      <div id="loyaltyStatusMsg" style="margin-top:8px; font-size:13px; min-height:18px;"></div>
+    </div>
+  </div>
+
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2224,6 +2261,166 @@ function renderStore() {
 
     renderImagePreviews();
     renderCartUI();
+          const LOYALTY_STORAGE_KEY = "alfia_loyalty_stamps_v1";
+      const TOTAL_LOYALTY_SLOTS = 8;
+
+      const openLoyaltyBtn = document.getElementById("openLoyaltyBtn");
+      const loyaltyModal = document.getElementById("loyaltyModal");
+      const closeLoyaltyBtn = document.getElementById("closeLoyaltyBtn");
+      const loyaltySlotsGrid = document.getElementById("loyaltySlotsGrid");
+      const loyaltyWinBanner = document.getElementById("loyaltyWinBanner");
+      const stampCodeInput = document.getElementById("stampCodeInput");
+      const applyStampCodeBtn = document.getElementById("applyStampCodeBtn");
+      const loyaltyStatusMsg = document.getElementById("loyaltyStatusMsg");
+      const generateStampCodeBtn = document.getElementById("generateStampCodeBtn");
+      const generatedStampBox = document.getElementById("generatedStampBox");
+      const generatedStampText = document.getElementById("generatedStampText");
+      const copyStampCodeBtn = document.getElementById("copyStampCodeBtn");
+
+      function getStampedCount() {
+        const raw = localStorage.getItem(LOYALTY_STORAGE_KEY);
+        const num = parseInt(raw || "0", 10);
+        if (isNaN(num) || num < 0) return 0;
+        return Math.min(num, TOTAL_LOYALTY_SLOTS);
+      }
+
+      function setStampedCount(count) {
+        const safeCount = Math.max(0, Math.min(count, TOTAL_LOYALTY_SLOTS));
+        localStorage.setItem(LOYALTY_STORAGE_KEY, String(safeCount));
+        renderLoyaltyCard();
+      }
+
+      function renderLoyaltyCard() {
+        if (!loyaltySlotsGrid) return;
+        const count = getStampedCount();
+        loyaltySlotsGrid.innerHTML = "";
+
+        for (let i = 1; i <= TOTAL_LOYALTY_SLOTS; i++) {
+          const isStamped = i <= count;
+          const slot = document.createElement("div");
+          slot.style.cssText = isStamped
+            ? "padding:14px 6px; border-radius:10px; text-align:center; font-weight:700; background:rgba(34,197,94,0.2); border:1px solid #22c55e; color:#86efac;"
+            : "padding:14px 6px; border-radius:10px; text-align:center; font-weight:700; background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.25); color:#cbd5e1;";
+          slot.innerHTML = isStamped
+            ? `<div>✓</div><div style="font-size:11px; margin-top:2px;">ختم ${i}</div>`
+            : `<div style="font-size:13px;">${i}</div><div style="font-size:10px; opacity:0.75; margin-top:2px;">فارغة</div>`;
+          loyaltySlotsGrid.appendChild(slot);
+        }
+
+        if (loyaltyWinBanner) {
+          loyaltyWinBanner.style.display = count >= TOTAL_LOYALTY_SLOTS ? "block" : "none";
+        }
+      }
+
+      function createRandomStampCode() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let part = "";
+        for (let i = 0; i < 4; i++) {
+          part += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return "ALF-" + part;
+      }
+
+      if (generateStampCodeBtn) {
+        generateStampCodeBtn.addEventListener("click", async () => {
+          const code = createRandomStampCode();
+          try {
+            await set(ref(db, "loyaltyStamps/" + code), {
+              createdAt: Date.now(),
+              singleUse: true
+            });
+            if (generatedStampText) generatedStampText.textContent = code;
+            if (generatedStampBox) generatedStampBox.style.display = "block";
+            if (copyStampCodeBtn) copyStampCodeBtn.textContent = "نسخ الرمز";
+          } catch (err) {
+            alert("تعذر توليد الرمز، تأكد من اتصال الإنترنت وقاعدة البيانات.");
+          }
+        });
+      }
+
+      if (copyStampCodeBtn) {
+        copyStampCodeBtn.addEventListener("click", async () => {
+          const code = generatedStampText ? generatedStampText.textContent.trim() : "";
+          if (!code) return;
+          try {
+            await navigator.clipboard.writeText(code);
+            copyStampCodeBtn.textContent = "تم النسخ ✓";
+          } catch {
+            copyStampCodeBtn.textContent = code;
+          }
+        });
+      }
+
+      if (openLoyaltyBtn && loyaltyModal) {
+        openLoyaltyBtn.addEventListener("click", () => {
+          if (loyaltyStatusMsg) loyaltyStatusMsg.textContent = "";
+          if (stampCodeInput) stampCodeInput.value = "";
+          renderLoyaltyCard();
+          loyaltyModal.classList.add("open");
+        });
+      }
+
+      if (closeLoyaltyBtn && loyaltyModal) {
+        closeLoyaltyBtn.addEventListener("click", () => {
+          loyaltyModal.classList.remove("open");
+        });
+      }
+
+      if (applyStampCodeBtn && stampCodeInput) {
+        applyStampCodeBtn.addEventListener("click", async () => {
+          const entered = stampCodeInput.value.trim().toUpperCase();
+          if (!entered) {
+            if (loyaltyStatusMsg) {
+              loyaltyStatusMsg.style.color = "#fca5a5";
+              loyaltyStatusMsg.textContent = "يرجى إدخال رمز الختم أولاً.";
+            }
+            return;
+          }
+
+          const currentCount = getStampedCount();
+          if (currentCount >= TOTAL_LOYALTY_SLOTS) {
+            if (loyaltyStatusMsg) {
+              loyaltyStatusMsg.style.color = "#86efac";
+              loyaltyStatusMsg.textContent = "بطاقتك مكتملة بالفعل ومؤهلة لجائزة 20,000 دينار!";
+            }
+            return;
+          }
+
+          try {
+            const stampRef = ref(db, "loyaltyStamps/" + entered);
+            const { get } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+            const snap = await get(stampRef);
+
+            if (!snap.exists()) {
+              if (loyaltyStatusMsg) {
+                loyaltyStatusMsg.style.color = "#fca5a5";
+                loyaltyStatusMsg.textContent = "الرمز غير صحيح أو تم استخدامه مسبقاً.";
+              }
+              return;
+            }
+
+            await remove(stampRef);
+            const nextCount = currentCount + 1;
+            setStampedCount(nextCount);
+            stampCodeInput.value = "";
+
+            if (loyaltyStatusMsg) {
+              loyaltyStatusMsg.style.color = "#86efac";
+              loyaltyStatusMsg.textContent = nextCount >= TOTAL_LOYALTY_SLOTS
+                ? "تم ختم الخانة الثامنة! مبروك فزت بجائزة قيمتها 20,000 دينار 🎉"
+                : `تم ختم الخانة رقم ${nextCount} بنجاح!`;
+            }
+          } catch (err) {
+            if (loyaltyStatusMsg) {
+              loyaltyStatusMsg.style.color = "#fca5a5";
+              loyaltyStatusMsg.textContent = "حدث خطأ أثناء التحقق من الرمز.";
+            }
+          }
+        });
+      }
+
+      renderLoyaltyCard();
+
   </script>
 </body>
 </html>
