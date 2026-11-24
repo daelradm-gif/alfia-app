@@ -1778,7 +1778,7 @@
       }
     });
 
-    let visibleStoreCount = 2;
+    let visibleStoreCount = 8;
 let isStoreScrollBound = false;
 
 function renderStore() {
@@ -2291,7 +2291,7 @@ async function saveCachedProductsFast(list) {
 
 loadCachedProductsFast();
 
-fetch(DB_REST_URL + '?orderBy="$key"&limitToLast=6')
+fetch(DB_REST_URL + '?orderBy="$key"&limitToLast=12')
   .then((r) => r.json())
   .then((data) => {
     if (!data || allProducts.length) return;
@@ -2538,6 +2538,24 @@ fetch(DB_REST_URL + '?orderBy="$key"&limitToLast=6')
     childList: true,
     subtree: true
   });
+})();
+</script>
+<script>
+(function () {
+  function autoExpandStore() {
+    if (typeof allProducts !== "undefined" && typeof visibleStoreCount !== "undefined") {
+      if (visibleStoreCount < allProducts.length) {
+        var nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 700);
+        if (nearBottom || document.body.offsetHeight <= window.innerHeight + 100) {
+          visibleStoreCount += 8;
+          if (typeof renderStore === "function") renderStore();
+        }
+      }
+    }
+  }
+  window.addEventListener("scroll", autoExpandStore, { passive: true });
+  window.addEventListener("touchmove", autoExpandStore, { passive: true });
+  setInterval(autoExpandStore, 1200);
 })();
 </script>
 
