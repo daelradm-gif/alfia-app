@@ -2248,6 +2248,59 @@ function renderStore() {
         adminProductsList.appendChild(row);
       });
     }
+    const PRODUCTS_CACHE_KEY = "alfia_products_fast_cache_v1";
+
+    function loadCachedProductsFast() {
+      try {
+        const raw = localStorage.getItem(PRODUCTS_CACHE_KEY);
+        if (!raw) return false;
+        const cached = JSON.parse(raw);
+        if (Array.isArray(cached) && cached.length) {
+          allProducts = cached;
+          syncCartWithAvailableProducts();
+          renderStore();
+          renderAdminProducts();
+          renderCartUI();
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    function saveCachedProductsFast(list) {
+      try {
+        const lightList = list.slice(0, 40).map((p) => {
+          const firstImg =
+            Array.isArray(p.images) && p.images.length
+              ? p.images[0]
+              : p.image || "";
+          return {
+            id: p.id,
+            name: p.name,
+            category: p.category,
+            originalPrice: p.originalPrice,
+            salePrice: p.salePrice,
+            stockQty: p.stockQty,
+            isNew: p.isNew,
+            isPaused: p.isPaused,
+            createdAt: p.createdAt,
+            image: firstImg,
+            images: firstImg ? [firstImg] : []
+          };
+        });
+        localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(lightList));
+      } catch (e) {}
+    }
+
+    const hasInstantCache = loadCachedProductsFast();
+
+    const fallbackLoadTimer = setTimeout(() => {
+      if (!allProducts.length && storeGrid) {
+        storeGrid.innerHTML =
+          '<div class="empty-state">الإنترنت ضعيف حالياً، جاري محاولة الاتصال...<br><button type="button" class="btn-primary" style="margin-top:10px;max-width:180px" onclick="location.reload()">تحديث الآن</button></div>';
+      }
+    }, 6000);
+    
 
     onValue(productsRef, (snapshot) => {
       const data = snapshot.val();
@@ -2268,6 +2321,9 @@ function renderStore() {
       });
 
       allProducts = list;
+        clearTimeout(fallbackLoadTimer);
+  saveCachedProductsFast(list);
+
       syncCartWithAvailableProducts();
       renderStore();
       renderAdminProducts();
