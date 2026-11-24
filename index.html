@@ -2452,5 +2452,29 @@ function renderStore() {
       renderLoyaltyCard();
 
   </script>
+  <script>
+(function () {
+  function applyLazyImages() {
+    document.querySelectorAll('img').forEach(function (img) {
+      if (!img.hasAttribute('loading')) {
+        img.setAttribute('loading', 'lazy');
+      }
+      img.decoding = 'async';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyLazyImages);
+  } else {
+    applyLazyImages();
+  }
+
+  new MutationObserver(applyLazyImages).observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+})();
+</script>
+
 </body>
 </html>
