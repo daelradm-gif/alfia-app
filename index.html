@@ -2248,59 +2248,68 @@ function renderStore() {
         adminProductsList.appendChild(row);
       });
     }
-    const PRODUCTS_CACHE_KEY = "alfia_products_fast_cache_v1";
-
-    function loadCachedProductsFast() {
-      try {
-        const raw = localStorage.getItem(PRODUCTS_CACHE_KEY);
-        if (!raw) return false;
-        const cached = JSON.parse(raw);
-        if (Array.isArray(cached) && cached.length) {
-          allProducts = cached;
-          syncCartWithAvailableProducts();
-          renderStore();
-          renderAdminProducts();
-          renderCartUI();
-          return true;
-        }
-      } catch (e) {}
-      return false;
-    }
-
-    function saveCachedProductsFast(list) {
-      try {
-        const lightList = list.slice(0, 40).map((p) => {
-          const firstImg =
-            Array.isArray(p.images) && p.images.length
-              ? p.images[0]
-              : p.image || "";
-          return {
-            id: p.id,
-            name: p.name,
-            category: p.category,
-            originalPrice: p.originalPrice,
-            salePrice: p.salePrice,
-            stockQty: p.stockQty,
-            isNew: p.isNew,
-            isPaused: p.isPaused,
-            createdAt: p.createdAt,
-            image: firstImg,
-            images: firstImg ? [firstImg] : []
-          };
-        });
-        localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(lightList));
-      } catch (e) {}
-    }
-
-    const hasInstantCache = loadCachedProductsFast();
-
-    const fallbackLoadTimer = setTimeout(() => {
-      if (!allProducts.length && storeGrid) {
-        storeGrid.innerHTML =
-          '<div class="empty-state">الإنترنت ضعيف حالياً، جاري محاولة الاتصال...<br><button type="button" class="btn-primary" style="margin-top:10px;max-width:180px" onclick="location.reload()">تحديث الآن</button></div>';
-      }
-    }, 6000);
     
+    const IDB_NAME = "alfia_fast_db";
+const IDB_STORE = "kv";
+const DB_REST_URL = "https://alfia-store-default-rtdb.firebaseio.com/products.json";
+
+function openFastDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function loadCachedProductsFast() {
+  try {
+    const db = await openFastDB();
+    const cached = await new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, "readonly");
+      const req = tx.objectStore(IDB_STORE).get("products");
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    });
+    if (Array.isArray(cached) && cached.length && !allProducts.length) {
+      allProducts = cached;
+      syncCartWithAvailableProducts();
+      renderStore();
+      renderAdminProducts();
+      renderCartUI();
+    }
+  } catch (e) {}
+}
+
+async function saveCachedProductsFast(list) {
+  try {
+    const db = await openFastDB();
+    const tx = db.transaction(IDB_STORE, "readwrite");
+    tx.objectStore(IDB_STORE).put(list, "products");
+  } catch (e) {}
+}
+
+loadCachedProductsFast();
+
+fetch(DB_REST_URL + '?orderBy="$key"&limitToLast=6')
+  .then((r) => r.json())
+  .then((data) => {
+    if (!data || allProducts.length) return;
+    const quickList = Object.entries(data).map(([id, item]) => ({
+      id,
+      ...(item || {})
+    }));
+    quickList.sort((a, b) => {
+      if (Boolean(a.isNew) !== Boolean(b.isNew)) return a.isNew ? -1 : 1;
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
+    if (!allProducts.length) {
+      allProducts = quickList;
+      renderStore();
+    }
+  })
+  .catch(() => {});
+
 
     onValue(productsRef, (snapshot) => {
       const data = snapshot.val();
@@ -2321,7 +2330,7 @@ function renderStore() {
       });
 
       allProducts = list;
-        clearTimeout(fallbackLoadTimer);
+        
   saveCachedProductsFast(list);
 
       syncCartWithAvailableProducts();
