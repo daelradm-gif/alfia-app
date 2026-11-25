@@ -983,27 +983,54 @@ body {
 body.dark-mode .header {
   background: rgba(9, 13, 22, 0.88) !important;
 }
+.header-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+.brand {
+  min-width: 0 !important;
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
 .brand img {
-  border-radius: 14px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 12px !important;
   border: 2px solid var(--accent) !important;
+  flex-shrink: 0 !important;
 }
 .brand-name {
   color: var(--text) !important;
   font-weight: 900 !important;
-  font-size: 1.15rem !important;
+  font-size: 0.95rem !important;
+  white-space: nowrap !important;
 }
-
 .brand-sub {
   color: var(--muted) !important;
+  font-size: 0.65rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
 }
 .header-btn, #openLoyaltyBtn, #openCartHeaderBtn {
   background: #0F172A !important;
   color: #FFFFFF !important;
   border: none !important;
-  border-radius: 14px !important;
-  padding: 8px 12px !important;
+  border-radius: 11px !important;
+  padding: 6px 9px !important;
+  font-size: 0.72rem !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  white-space: nowrap !important;
 }
 body.dark-mode .header-btn,
 body.dark-mode #openLoyaltyBtn,
@@ -1011,6 +1038,7 @@ body.dark-mode #openCartHeaderBtn {
   background: #1E293B !important;
   color: #FBBF24 !important;
 }
+
 .modern-theme-btn {
   width: 36px;
   height: 36px;
@@ -1105,7 +1133,8 @@ body.dark-mode .btn-add-cart, body.dark-mode .card button {
 
 /* شريط السلة السفلي العائم على شكل Dock زجاجي */
 .floating-cart-bar {
-  
+  display: none;
+
   background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
