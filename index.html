@@ -946,6 +946,221 @@
       border: 1px solid var(--border);
       border-radius: 14px;
     }
+    /* ===== ALFYA MODERN OUTLET UI OVERRIDE ===== */
+:root {
+  --bg: #F4F6FA;
+  --card: #FFFFFF;
+  --card-2: #F8FAFC;
+  --text: #0F172A;
+  --muted: #64748B;
+  --border: #E2E8F0;
+  --accent: #F59E0B;
+}
+body.dark-mode {
+  --bg: #090D16;
+  --card: #121826;
+  --card-2: #1A2234;
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+  --border: #1E293B;
+}
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  padding-bottom: 96px !important;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* الهيدر الزجاجي العصري */
+.header {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 0 26px 26px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+body.dark-mode .header {
+  background: rgba(9, 13, 22, 0.88) !important;
+}
+.brand img {
+  border-radius: 14px !important;
+  border: 2px solid var(--accent) !important;
+}
+.brand-name {
+  color: var(--text) !important;
+  font-weight: 900 !important;
+  font-size: 1.15rem !important;
+}
+.brand-name::after {
+  content: "OUTLET";
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 7px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  vertical-align: middle;
+}
+.brand-sub {
+  color: var(--muted) !important;
+}
+.header-btn, #openLoyaltyBtn, #openCartHeaderBtn {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 8px 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+body.dark-mode .header-btn,
+body.dark-mode #openLoyaltyBtn,
+body.dark-mode #openCartHeaderBtn {
+  background: #1E293B !important;
+  color: #FBBF24 !important;
+}
+.modern-theme-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 13px;
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  color: var(--text);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* شريط البحث */
+.search-box input {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  padding: 12px 16px !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+/* شريط الأقسام العائم */
+.cats-bar {
+  position: sticky;
+  top: 66px;
+  z-index: 15;
+  background: rgba(244, 246, 250, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 4px !important;
+  margin-bottom: 10px !important;
+}
+body.dark-mode .cats-bar {
+  background: rgba(9, 13, 22, 0.85);
+}
+.cat-chip {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 999px !important;
+  padding: 8px 16px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.cat-chip.active {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  border-color: #0F172A !important;
+}
+body.dark-mode .cat-chip.active {
+  background: #F59E0B !important;
+  color: #090D16 !important;
+  border-color: #F59E0B !important;
+}
+
+/* بطاقات المنتجات العصرية */
+.products-grid {
+  gap: 12px !important;
+}
+.product-card, .card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05) !important;
+}
+.card-title, .product-title {
+  color: var(--text) !important;
+  font-weight: 800 !important;
+}
+.sale-price, .price-now {
+  color: var(--text) !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+}
+body.dark-mode .sale-price, body.dark-mode .price-now {
+  color: #FBBF24 !important;
+}
+.btn-add-cart, .card button {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  border-radius: 14px !important;
+  font-weight: 800 !important;
+}
+body.dark-mode .btn-add-cart, body.dark-mode .card button {
+  background: #F59E0B !important;
+  color: #090D16 !important;
+}
+
+/* شريط السلة السفلي العائم على شكل Dock زجاجي */
+.floating-cart-bar {
+  display: flex !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14) !important;
+  bottom: 14px !important;
+  padding: 10px 14px !important;
+}
+body.dark-mode .floating-cart-bar {
+  background: rgba(18, 24, 38, 0.92) !important;
+}
+.floating-cart-count, .floating-cart-total {
+  color: var(--text) !important;
+}
+.btn-open-cart {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  border-radius: 16px !important;
+  padding: 10px 18px !important;
+  font-weight: 900 !important;
+}
+body.dark-mode .btn-open-cart {
+  background: #F59E0B !important;
+  color: #090D16 !important;
+}
+
+/* النوافذ المنبثقة على شكل Bottom Sheet */
+.modal-backdrop {
+  align-items: flex-end !important;
+  padding: 0 !important;
+}
+.modal-box {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-radius: 28px 28px 0 0 !important;
+  border: 1px solid var(--border) !important;
+  max-height: 88vh !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+}
+
   </style>
 </head>
 <body>
@@ -960,6 +1175,8 @@
       </div>
 
       <div class="header-actions">
+        <button type="button" class="modern-theme-btn" id="themeToggleBtn" onclick="document.body.classList.toggle('dark-mode'); this.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';" title="تغيير المظهر">🌙</button>
+
                 <button type="button" class="header-cart-btn" id="openLoyaltyBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;">
           <span>🎁 الجوائز</span>
         </button>
