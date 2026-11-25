@@ -2291,39 +2291,25 @@ async function saveCachedProductsFast(list) {
 
 loadCachedProductsFast();
 
-const isAndroidDevice = /Android/i.test(navigator.userAgent || "");
-
-function syncProductsViaRest(attempt = 1) {
-  fetch(DB_REST_URL, { cache: "no-store" })
-    .then((r) => r.json())
-    .then((data) => {
-      if (!data) return;
-      const list = Object.entries(data).map(([id, item]) => ({
-        id,
-        ...(item || {})
-      }));
-      list.sort((a, b) => {
-        if (Boolean(a.isNew) !== Boolean(b.isNew)) return a.isNew ? -1 : 1;
-        return (b.createdAt || 0) - (a.createdAt || 0);
-      });
-      allProducts = list;
-      saveCachedProductsFast(list);
-      syncCartWithAvailableProducts();
-      renderStore();
-      renderAdminProducts();
-      renderCartUI();
-    })
-    .catch(() => {
-      if (attempt < 3) {
-        setTimeout(() => syncProductsViaRest(attempt + 1), 2000);
-      }
+fetch(DB_REST_URL + '?orderBy=%22$key%22&limitToLast=6')
+  .then((r) => r.json())
+  .then((data) => {
+    if (!data || allProducts.length) return;
+    const quickList = Object.entries(data).map(([id, item]) => ({
+      id,
+      ...(item || {})
+    }));
+    quickList.sort((a, b) => {
+      if (Boolean(a.isNew) !== Boolean(b.isNew)) return a.isNew ? -1 : 1;
+      return (b.createdAt || 0) - (a.createdAt || 0);
     });
-}
+    if (!allProducts.length) {
+      allProducts = quickList;
+      renderStore();
+    }
+  })
+  .catch(() => {});
 
-if (isAndroidDevice) {
-  document.documentElement.classList.add("android-mode");
-  syncProductsViaRest();
-}
 
 
 
